@@ -1,6 +1,5 @@
-name: society_voting_system
-description: A Flutter voting system for gated society elections with SupaBase backend.
-publish_to: 'none'
+name: society_voting_firebase
+description: A production-ready digital voting system for gated housing societies using Firebase.
 version: 1.0.0+1
 
 environment:
@@ -9,21 +8,19 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
-  # SupaBase Integration
-  supabase_flutter: ^2.0.0
-  
-  # State Management
-  flutter_riverpod: ^2.4.0
-  
-  # Navigation
-  go_router: ^12.0.0
-  
-  # Image Picker
-  image_picker: ^1.0.4
-  
-  # Utilities
-  intl: ^0.18.1
+  cupertino_icons: ^1.0.6
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.15.3
+  cloud_firestore: ^4.13.6
+  firebase_storage: ^11.5.6
+  flutter_riverpod: ^2.4.9
+  go_router: ^12.1.3
+  image_picker: ^1.0.7
+  intl: ^0.19.0
+  logger: ^2.0.2
+  excel: ^4.0.0
+  path_provider: ^2.1.2
+  share_plus: ^7.2.2
 
 dev_dependencies:
   flutter_test:
@@ -32,3 +29,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/

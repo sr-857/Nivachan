@@ -1,73 +1,71 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../data/models/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:society_voting_firebase/data/models/voter_model.dart';
 
 class AuthService {
-  final SupabaseClient _supabase = Supabase.instance.client;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// Register a new user in the system
-  Future<UserModel> registerUser({
-    required String name,
-    required String blockNumber,
-    required String flatNumber,
-    required String phone,
-    String? email,
+  // Stream of auth changes
+  Stream<User?> get user => _auth.authStateChanges();
+
+  // Send OTP
+  Future<void> sendOTP({
+    required String phoneNumber,
+    required Function(String verificationId) onCodeSent,
+    required Function(FirebaseAuthException e) onVerificationFailed,
   }) async {
-    try {
-      // Check if phone number already exists
-      final existingUser = await _supabase
-          .from('users')
-          .select()
-          .eq('phone', phone)
-          .maybeSingle();
-
-      if (existingUser != null) {
-        throw Exception('Phone number already registered');
-      }
-
-      // Insert new user
-      final response = await _supabase.from('users').insert({
-        'name': name,
-        'block_number': blockNumber,
-        'flat_number': flatNumber,
-        'phone': phone,
-        'email': email,
-      }).select().single();
-
-      return UserModel.fromJson(response);
-    } catch (e) {
-      throw Exception('Failed to register user: $e');
-    }
+    await _auth.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        await _auth.signInWithCredential(credential);
+      },
+      verificationFailed: onVerificationFailed,
+      codeSent: (String verificationId, int? resendToken) {
+        onCodeSent(verificationId);
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
   }
 
-  /// Get user by phone number
-  Future<UserModel?> getUserByPhone(String phone) async {
-    try {
-      final response = await _supabase
-          .from('users')
-          .select()
-          .eq('phone', phone)
-          .maybeSingle();
-
-      if (response == null) return null;
-      return UserModel.fromJson(response);
-    } catch (e) {
-      throw Exception('Failed to fetch user: $e');
-    }
+  // Sign in with OTP
+  Future<UserCredential> signInWithOTP(String verificationId, String smsCode) async {
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+      verificationId: verificationId,
+      smsCode: smsCode,
+    );
+    return await _auth.signInWithCredential(credential);
   }
 
-  /// Check if a flat has already voted
-  Future<bool> hasFlatVoted(String flatNumber) async {
-    try {
-      final response = await _supabase
-          .from('users')
-          .select('has_voted')
-          .eq('flat_number', flatNumber)
-          .eq('has_voted', true)
-          .maybeSingle();
+  // Register Voter
+  Future<void> registerVoter(VoterModel voter) async {
+    // Check if flat is already registered
+    final flatQuery = await _firestore
+        .collection('users')
+        .where('blockNumber', isEqualTo: voter.blockNumber)
+        .where('flatNumber', isEqualTo: voter.flatNumber)
+        .get();
 
-      return response != null;
-    } catch (e) {
-      throw Exception('Failed to check voting status: $e');
+    if (flatQuery.docs.isNotEmpty) {
+      throw Exception('This flat is already registered for voting.');
     }
+
+    await _firestore.collection('users').doc(voter.uid).set(voter.toMap());
+  }
+
+  // Get current voter data
+  Future<VoterModel?> getCurrentVoter() async {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    if (!doc.exists) return null;
+    
+    return VoterModel.fromMap(doc.data()!);
+  }
+
+  // Sign out
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 }
