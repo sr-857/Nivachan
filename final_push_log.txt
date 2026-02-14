@@ -1,0 +1,2 @@
+error: src refspec feature/issue-3-admin-panel does not match any
+error: failed to push some refs to 'https://github.com/sr-857/article55.git'

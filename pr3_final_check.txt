@@ -1,0 +1,1 @@
+pull request create failed: GraphQL: Head sha can't be blank, Base sha can't be blank, No commits between SOURAVTIWARI01:main and sr-857:feature/issue-3-admin-panel, Head ref must be a branch (createPullRequest)

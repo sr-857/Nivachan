@@ -1,0 +1,7 @@
+  feature/issue-1-initial-setup
+* feature/issue-2-voting-module
+  main
+  remotes/fork/feature/issue-1-initial-setup
+  remotes/fork/feature/issue-2-voting-module
+  remotes/origin/HEAD -> origin/main
+  remotes/origin/main

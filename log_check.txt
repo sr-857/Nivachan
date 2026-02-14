@@ -1,0 +1,5 @@
+ad32620 feat: Admin panel, vote monitoring, candidate approval & security rules
+9237996 feat: Candidate module, voting UI & secure one-vote-per-flat logic
+fc760c2 feat: Initial project setup with Flutter, SupaBase integration & user authentication
+f80372a Update README.md
+f16685a Initial commit
