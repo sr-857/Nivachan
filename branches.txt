@@ -1,0 +1,4 @@
+* feature/issue-1-initial-setup
+  main
+  remotes/origin/HEAD -> origin/main
+  remotes/origin/main

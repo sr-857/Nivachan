@@ -1,0 +1,3 @@
+fc760c2 feat: Initial project setup with Flutter, SupaBase integration & user authentication
+f80372a Update README.md
+f16685a Initial commit

@@ -1,0 +1,6 @@
+github.com
+  ✓ Logged in to github.com account sr-857 (keyring)
+  - Active account: true
+  - Git operations protocol: https
+  - Token: ghp_************************************
+  - Token scopes: 'admin:org', 'codespace', 'repo', 'user', 'write:packages'
